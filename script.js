@@ -29,6 +29,11 @@ import { createShape } from "./shape.js";
 // the note played when the pointer goes down
 const noteLeft = "C4";
 const noteRight = "E4";
+// Volume range in decibels
+const minVolume = -36;
+const maxVolume = -12;
+// pointers peed needed to reach maximun volume
+const speedForMaxVolume = 1;
 
 // ---------- State ----------
 // State variables are the parts of your program that change over time.
@@ -42,7 +47,7 @@ let square2;
 let rotation1 = 0;
 let rotation2 = 0;
 
-let lasX1 = 0;
+let lastX1 = 0;
 let lastY1 = 0;
 let lastTime1 = 0;
 
@@ -50,10 +55,16 @@ let lastX2 = 0;
 let lastY2 = 0;
 let lastTime2 = 0;
 
+const leftSpeeds = [];
+const rightSpeeds = [];
+
 // ---------- Sound ----------
 // Make the instruments and plug them into the speakers.
 const leftsynth = new Tone.AMSynth().toDestination(); // can play several notes at once
 const rightsynth = new Tone.AMSynth().toDestination();
+// start both synth at the minimun volume
+leftsynth.volume.value = minVolume;
+rightsynth.volume.value = minVolume;
 
 function leftEnter() {
   Tone.start();
@@ -76,12 +87,41 @@ function rightLeave() {
 // ---------- Update ----------
 // Update the state. This is called every 100ms.
 function update() {
+  // every update stores 80% of the stored speedvaribuls
+  speed1 = speed1 * 0.8;
+  speed2 = speed2 * 0.8;
+
   setTimeout(update, 100); // call update() again in 100 milliseconds
 }
 
 // ---------- Use ----------
 // Use the state to make sound and move shapes. This is called every 100ms.
+// will make so the pointer movment affects the sound of the note, so it it moves slower
+// it will be low sonud and if it moves fast it will create a higher sound
 function use() {
+  let leftLevel = speed1 / speedForMaxVolume;
+  let rightLevel = speed2 / speedForMaxVolume;
+
+  //keep each level at a maximum of 1
+  if (leftLevel > 1) {
+    leftLevel = 1;
+  }
+
+  if (rightLevel > 1) {
+    rightLevel = 1;
+  }
+
+  //calculate the difference between the volum limits
+  let volumeRange = maxVolume - minVolume;
+
+  // calculate the volume for each side
+  let leftVolume = minVolume + leftLevel * volumeRange;
+  let rightVolume = minVolume + rightLevel * volumeRange;
+
+  leftsynth.volume.value = -12;
+  rightsynth.volume.value = -12;
+  console.log("Speed:", speed1, "Volume:", leftsynth.volume.value);
+
   setTimeout(use, 100); // call use() again in 100 milliseconds
 }
 
@@ -92,22 +132,31 @@ function pointerDown(event) {
 
   synth.triggerAttackRelease(note, "8n"); // play the note for an eighth note
 }
+
 function leftMove(event) {
-  console.log;
   let distance = Math.abs(event.movementX) + Math.abs(event.movementY);
 
   rotation1 = rotation1 + distance * 0.5;
   square1.setRotation(rotation1);
-git add .git add .
+
   let normX = event.clientX / window.innerWidth;
   leftsynth.detune.value = -1200 + normX * 2400;
 
   let normY = event.clientY / window.innerHeight;
-
   let now = Date.now();
-  let pointerDistance = matchMedia.hypot(normX - lastX1, normY - lastY1);
-  let seconds = (now - lastTime1) / 1000;
+  if (lastTime1 > 0) {
+    let seconds = (now - lastTime1) / 1000;
+    let pointerDistance = Math.hypot(normX - lastX1, normY - lastY1);
+    if (seconds > 0) {
+      speed1 = pointerDistance / seconds;
+      console.log("left speed:", speed1);
+    }
+  }
+  lastX1 = normX;
+  lastY1 = normY;
+  lastTime1 = now;
 }
+
 function rightMove(event) {
   let distance = Math.abs(event.movementX) + Math.abs(event.movementY);
 
@@ -117,14 +166,16 @@ function rightMove(event) {
   let normX = event.clientX / window.innerWidth;
   rightsynth.detune.value = -1200 + normX * 2400;
 
-  let normY = event.clientY / windown.innerHeight;
-
+  let normY = event.clientY / window.innerHeight;
   let now = Date.now();
-  let pointerDistance = Math.hypot(normX - lastX2, normY - lastY2);
-  let seconds = (now - lastTime2) / seconds;
 
-  if (seconds > 0) {
-    let speed = pointerDistance / seconds;
+  if (lastTime2 > 0) {
+    let seconds = (now - lastTime2) / 1000;
+    let pointerDistance = Math.hypot(normX - lastX2, normY - lastY2);
+    if (seconds > 0) {
+      let speed2 = pointerDistance / seconds;
+      console.log("Right speed:", speed2);
+    }
   }
   lastX2 = normX;
   lastY2 = normY;
