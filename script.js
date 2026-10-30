@@ -55,6 +55,9 @@ let lastX2 = 0;
 let lastY2 = 0;
 let lastTime2 = 0;
 
+let speed1 = 0;
+let speed2 = 0;
+
 const leftSpeeds = [];
 const rightSpeeds = [];
 
@@ -88,8 +91,8 @@ function rightLeave() {
 // Update the state. This is called every 100ms.
 function update() {
   // every update stores 80% of the stored speedvaribuls
-  speed1 = speed1 * 0.8;
-  speed2 = speed2 * 0.8;
+  speed1 = speed1 * 0.95;
+  speed2 = speed2 * 0.95;
 
   setTimeout(update, 100); // call update() again in 100 milliseconds
 }
@@ -118,8 +121,8 @@ function use() {
   let leftVolume = minVolume + leftLevel * volumeRange;
   let rightVolume = minVolume + rightLevel * volumeRange;
 
-  leftsynth.volume.value = -12;
-  rightsynth.volume.value = -12;
+  leftsynth.volume.rampTo(leftVolume, 0.1);
+  rightsynth.volume.rampTo(rightVolume, 0.1);
   console.log("Speed:", speed1, "Volume:", leftsynth.volume.value);
 
   setTimeout(use, 100); // call use() again in 100 milliseconds
@@ -173,7 +176,7 @@ function rightMove(event) {
     let seconds = (now - lastTime2) / 1000;
     let pointerDistance = Math.hypot(normX - lastX2, normY - lastY2);
     if (seconds > 0) {
-      let speed2 = pointerDistance / seconds;
+      speed2 = pointerDistance / seconds;
       console.log("Right speed:", speed2);
     }
   }
@@ -202,12 +205,16 @@ function setup() {
   rightCircle.element.appendChild(square2.element);
 
   leftCircle.setPosition(0.1, 0.22);
-  leftCircle.setSize(500);
-  leftCircle.setColour(330, 80, 85);
-
   rightCircle.setPosition(0.55, 0.22);
-  rightCircle.setSize(500);
-  rightCircle.setColour(330, 80, 85);
+
+  // store both circles in an array
+  const circles = [leftCircle, rightCircle];
+
+  // Give both circles  the same size and colour
+  for (let i = 0; i < circles.length; i++) {
+    circles[i].setSize(500);
+    circles[i].setColour(330, 80, 85);
+  }
 
   square1.setPositionPixels(210, 210);
   square1.setSize(80);
