@@ -2,18 +2,23 @@
 
 **Play it here:** <!-- Paste your GitHub Pages link here, e.g. https://idbcourses.github.io/your-repo-name/ -->
 
-**Name:** <!-- Your name and MAU ID -->
+**Name:** <!-- Your name and MAU ID --> Ketrin Telhaj as8795
 
-<!-- One or two sentences: what kind of instrument is it, and what is it like to play? -->
+<!-- One or two sentences: what kind of instrument is it, and what is it like to play? --> This is a pointer-contorlled instrument with two circles that have each a note. By moving the pointer changes the pitch and volume, so you can play by making slow, and fast movment, as well as the square rotation is connected with the pointers movment.
 
 ## How to play
 
 <!-- Fill in the table with a row for everything the player can do with the pointer: clicking, moving slowly or fast, moving in circles, holding still... Say what happens to the sound and to the shapes. If you added keys, give them rows too. -->
 
-| When you...  | The sound...                         | The shapes... |
-| ------------ | ------------------------------------ | ------------- |
-| Click or tap | Plays a C4 (the example: replace it) | Nothing yet   |
-|              |                                      |               |
+| When you...                        | The sound...         | The shapes...             |
+| ---------------------------------- | -------------------- | ------------------------- |
+| move pointer in the Rightcircle    | plays E4             | Nothing yet               |
+| move pointer in the leftcircle     | plays C4             | Nothing yet               |
+| move slowly inside a circle        | quieter sound        | the square rotates        |
+| move quickly inside a circle       | louder sound         | the square rotates faster |
+| move left or right inside a circle | changes the pitch    | the square rotates        |
+| hold still inside a circle         | the volume decreases | the square stops rotating |
+| move put of the circle             | releases the tone    | the square stays in place |
 
 <!-- Anything else a player needs to know: how to get started, a good thing to try first. -->
 
